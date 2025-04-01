@@ -261,11 +261,11 @@ void sys_led_show(void) {
     }
 
     if (user_config.numlock_state != 1 || !host_keyboard_led_state().num_lock) { return; }
-    
+
     current_rgb.r = 0x80, current_rgb.g = 0x80, current_rgb.b = 0x80;
     set_sys_light();
     side_ws2812_set_color_strip(led_side, current_rgb.r, current_rgb.g, current_rgb.b);
-        
+
 }
 
 static uint8_t breathe_data(uint8_t step) {
@@ -392,7 +392,7 @@ static void side_static_mode_show(void) {
     current_rgb.r = colour_lib[user_config.ee_side_colour][0];
     current_rgb.g = colour_lib[user_config.ee_side_colour][1];
     current_rgb.b = colour_lib[user_config.ee_side_colour][2];
- 
+
     count_rgb_light(side_light_table[user_config.ee_side_light]);
     side_ws2812_set_color_strip(LEFT_SIDE + RIGHT_SIDE, current_rgb.r, current_rgb.g, current_rgb.b);
 }
@@ -499,7 +499,7 @@ void bat_num_led(void)
 
     rgb_required = 1;
     // set color
-    
+
     if (bat_percent < low_bat_level) {
         r = 0xff; g = 0x00; b = 0x00;
     }
@@ -670,6 +670,7 @@ void device_reset_show(void) {
 void device_reset_init(void) {
     side_play_point  = 0;
     game_mode_enable = 0;
+    keybord_lock_enable = 0;
     f_bat_hold       = false;
 
     rgb_matrix_enable_noeeprom();
@@ -786,7 +787,10 @@ void normal_led_process(void) {
     if (user_config.ee_side_light == 0) {
         side_off_mode_show();
     } else {
-
+        if (keybord_lock_enable) {
+            side_ws2812_set_color_strip(LEFT_SIDE, RGB_RED);
+            return;
+        }
         switch (user_config.ee_side_mode) {
             case SIDE_WAVE:
                 side_wave_mode_show();
@@ -805,7 +809,7 @@ void normal_led_process(void) {
                 break;
         }
     }
-    
+
     side_one_show();
     bat_led_show();
     sleep_sw_led_show();
