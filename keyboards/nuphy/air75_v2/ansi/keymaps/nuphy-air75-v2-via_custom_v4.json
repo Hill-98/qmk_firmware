@@ -294,6 +294,11 @@
 			"name": "SOCD\nToggle",
 			"title": "SOCD Toggle",
 			"shortName": "Socd_Tog"
+		},
+        {
+			"name": "Keybord\nLock",
+			"title": "Keybord lock",
+			"shortName": "Key_Lock"
 		}
 	]
 }

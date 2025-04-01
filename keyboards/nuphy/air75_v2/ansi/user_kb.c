@@ -31,6 +31,7 @@ DEV_INFO_STRUCT dev_info = {
 };
 bool f_bat_hold          = 0;
 bool game_mode_enable    = 0;
+bool keybord_lock_enable   = 0;
 bool f_send_channel      = 0;
 bool f_dial_sw_init_ok   = 0;
 bool f_bat_num_show      = 0;
@@ -178,7 +179,7 @@ void user_key_press(void) {
             tap_code(KC_NUM);
             f_numlock_press = 0;
         }
-    } 
+    }
     // Trigger Game Mode Reset
     if (f_gmode_reset_press) {
         f_gmode_reset_press++;
@@ -188,7 +189,7 @@ void user_key_press(void) {
             f_gmode_reset_press = 0;
         }
     }
- 
+
     // SnapTap Function
     if (left_pressed)  {   left_pressed++; }
     if (right_pressed) {  right_pressed++; }
@@ -570,7 +571,7 @@ uint8_t step_helper(uint8_t dir, uint8_t value) {
         end_led  = (value - 30) / 5 - 1;
     } else {
         my_color = 7;
-        end_led  = 9;    
+        end_led  = 9;
     }
 
     signal_rgb_led(my_color, led_idx.KC_F1, led_idx.KC_F1 + end_led, 3000);

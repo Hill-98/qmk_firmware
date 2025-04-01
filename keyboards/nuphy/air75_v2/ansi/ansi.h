@@ -61,5 +61,7 @@ enum custom_keycodes {
     DEBOUNCE_T,
 
     GAME_MODE,
-    SOCD_TOG
+    SOCD_TOG,
+
+    KEYBORD_LOCK,
 };
