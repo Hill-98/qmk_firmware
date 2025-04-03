@@ -292,7 +292,7 @@
 		},
         {
 			"name": "Keybord\nLock",
-			"title": "Keybord lock",
+			"title": "Trigger Keybord lock",
 			"shortName": "Key_Lock"
 		}
 	]

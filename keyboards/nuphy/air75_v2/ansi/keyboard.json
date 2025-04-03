@@ -44,7 +44,7 @@
     "matrix_pins": {
         "cols": ["A4", "A5", "A6", "B9", "B0", "B1", "B10", "B11", "B12", "B13", "B14", "B15", "A8", "A9", "A10", "A15", "B3"],
         "rows": ["C14", "C15", "A0", "A1", "A2", "A3"],
-        "io_delay": 30 
+        "io_delay": 30
     },
     "ws2812": {
         "pin": "A7",
@@ -60,7 +60,7 @@
       "sleep": true,
       "led_process_limit": 8,
       "led_flush_limit": 26,
-      "default": { 
+      "default": {
           "animation": "cycle_left_right",
           "hue": 0,
           "val": 72,

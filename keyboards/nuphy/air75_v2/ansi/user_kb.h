@@ -206,8 +206,8 @@ extern uint16_t           rf_link_show_time;
 extern uint8_t            rf_disconnect_delay;
 
 extern bool               f_bat_hold;
-extern bool               keybord_lock_enable;
 extern bool               game_mode_enable;
+extern bool               keybord_lock_enable;
 extern uint32_t           sys_show_timer;
 extern uint32_t           sleep_show_timer;
 extern uint16_t           f_rf_sw_press;
