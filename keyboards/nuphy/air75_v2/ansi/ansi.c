@@ -108,10 +108,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;
 
         case KEYBORD_LOCK:
-            if (record->event.pressed) {    
+            if (record->event.pressed) {
                 keybord_lock_enable = !keybord_lock_enable;
             }
-            return false;
+            return true;
 
         case QK_RGB_MATRIX_TOGGLE:
             if (game_mode_enable) { return true; }
@@ -140,7 +140,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;
 
         default:
-            return !keybord_lock_enable;
+            return !keybord_lock_enable || keycode > 0x00FF || !record->event.pressed;
     }
 }
 
