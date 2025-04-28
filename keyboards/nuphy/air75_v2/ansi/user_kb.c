@@ -495,9 +495,11 @@ void game_mode_tweak(void)
         user_config.debounce_ms    = user_config.game_debounce_ms;
         user_config.debounce_type  = user_config.game_debounce_type;
         if (user_config.numlock_state != 0) { user_config.numlock_state = 1; }
+        layer_on(GAME_BASE);
     } else {
         rgb_matrix_reload_from_eeprom();
         eeconfig_read_kb_datablock(&user_config);
+        layer_off(GAME_BASE);
     }
 
 #ifndef NO_DEBUG
