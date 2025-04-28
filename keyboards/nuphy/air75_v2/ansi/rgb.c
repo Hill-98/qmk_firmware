@@ -727,7 +727,7 @@ void rgb_led_indicator(void) {
 
 void caps_word_show(void) {
     static bool caps_word_rgb_on = 0;
-    if (!is_caps_word_on() || game_mode_enable || !user_config.caps_word_enable) {
+    if (game_mode_enable || !user_config.caps_word_enable) {
         if (caps_word_rgb_on) {
             caps_word_rgb_on = 0;
             rgb_matrix_set_color(led_idx.KC_CAPS, RGB_OFF);
