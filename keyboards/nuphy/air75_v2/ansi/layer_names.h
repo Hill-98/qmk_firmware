@@ -5,6 +5,8 @@ enum layers{
     MAC_FN,
     WIN_BASE,
     WIN_FN,
-    M_LAYER
+    M_LAYER,
+    GAME_BASE,
+    GAME_FN,
 };
 

@@ -40,11 +40,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #if !defined(NO_PRINT) && !defined(CONSOLE_ENABLE)
 #define NO_PRINT
 #endif // !NO_PRINT
- 
+
 #if !defined(NO_DEBUG) && defined(CONSOLE_ENABLE)
 #define DEBUG_MATRIX_SCAN_RATE
 #endif // DEBUG_MATRIX_SCAN_RATE
- 
+
 #define DYNAMIC_KEYMAP_MACRO_DELAY          8
 
 #define WAIT_US_TIMER                       GPTD14
@@ -77,3 +77,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #undef GRAVE_ESC_ENABLE
 #undef SPACE_CADET_ENABLE
 */
+
+#define AUTO_SHIFT_TIMEOUT 200
+#define HOLD_ON_OTHER_KEY_PRESS
