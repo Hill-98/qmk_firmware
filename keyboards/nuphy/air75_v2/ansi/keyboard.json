@@ -20,7 +20,7 @@
     },
     "caps_word": {
         "double_tap_shift_turns_on": true,
-        "enabled": true,
+        "enabled": false,
         "idle_timeout": 5000
     },
     "usb": {
