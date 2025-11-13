@@ -31,7 +31,6 @@ DEV_INFO_STRUCT dev_info = {
 };
 bool f_bat_hold          = 0;
 bool game_mode_enable    = 0;
-bool keybord_lock_enable   = 0;
 bool f_send_channel      = 0;
 bool f_dial_sw_init_ok   = 0;
 bool f_bat_num_show      = 0;
