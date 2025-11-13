@@ -670,7 +670,6 @@ void device_reset_show(void) {
 void device_reset_init(void) {
     side_play_point  = 0;
     game_mode_enable = 0;
-    keybord_lock_enable = 0;
     f_bat_hold       = false;
 
     rgb_matrix_enable_noeeprom();
@@ -787,10 +786,6 @@ void normal_led_process(void) {
     if (user_config.ee_side_light == 0) {
         side_off_mode_show();
     } else {
-        if (keybord_lock_enable) {
-            side_ws2812_set_color_strip(LEFT_SIDE, RGB_RED);
-            return;
-        }
         switch (user_config.ee_side_mode) {
             case SIDE_WAVE:
                 side_wave_mode_show();
