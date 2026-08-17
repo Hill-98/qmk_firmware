@@ -6,14 +6,7 @@ releasing a key, that state is pushed after no changes occur for DEBOUNCE millis
 
 #include "debounce.h"
 #include "timer.h"
-#include <stdlib.h>
 #include "user_kb.h"
-
-#ifdef PROTOCOL_CHIBIOS
-#    if CH_CFG_USE_MEMCORE == FALSE
-#        error ChibiOS is configured without a memory allocator. Your keyboard may have set `#define CH_CFG_USE_MEMCORE FALSE`, which is incompatible with this debounce algorithm.
-#    endif
-#endif
 
 #define ROW_SHIFTER ((matrix_row_t)1)
 #define DEBOUNCE_ELAPSED 0
@@ -23,7 +16,7 @@ typedef struct {
     uint8_t time : 7;
 } debounce_counter_t;
 
-static debounce_counter_t *debounce_counters;
+static debounce_counter_t debounce_counters[MATRIX_ROWS * MATRIX_COLS];
 static fast_timer_t        last_time;
 static bool                counters_need_update;
 static bool                matrix_need_update;
@@ -39,24 +32,11 @@ void early_user_debounce_init(void) {
     user_config.debounce_ms = DEBOUNCE;
 }
 
-// we use num_rows rather than MATRIX_ROWS to support split keyboards
-void debounce_init(uint8_t num_rows) {
-    uint8_t max_counters = num_rows * MATRIX_COLS;
+void debounce_init(void) {
     early_user_debounce_init();
-
-    debounce_counters = malloc(max_counters * sizeof(debounce_counter_t));
-
-    for (uint8_t i = 0; i < max_counters; i++) {
-        debounce_counters[i].time = DEBOUNCE_ELAPSED;
-    }
 }
 
-void debounce_free(void) {
-    free(debounce_counters);
-    debounce_counters = NULL;
-}
-
-bool debounce(matrix_row_t raw[], matrix_row_t cooked[], uint8_t num_rows, bool changed) {
+bool debounce(matrix_row_t raw[], matrix_row_t cooked[], bool changed) {
     bool updated_last = false;
     cooked_changed    = false;
 
@@ -72,9 +52,9 @@ bool debounce(matrix_row_t raw[], matrix_row_t cooked[], uint8_t num_rows, bool 
 
         if (elapsed_time > 0) {
             if (user_config.debounce_type == 2) {
-                update_debounce_counters(num_rows, elapsed_time);
+                update_debounce_counters(MATRIX_ROWS, elapsed_time);
             } else {
-                update_debounce_counters_and_transfer_if_expired(raw, cooked, num_rows, elapsed_time);
+                update_debounce_counters_and_transfer_if_expired(raw, cooked, MATRIX_ROWS, elapsed_time);
             }
         }
     }
@@ -84,7 +64,7 @@ bool debounce(matrix_row_t raw[], matrix_row_t cooked[], uint8_t num_rows, bool 
             last_time = timer_read_fast();
         }
 
-        transfer_matrix_values(raw, cooked, num_rows);
+        transfer_matrix_values(raw, cooked, MATRIX_ROWS);
     }
 
     return cooked_changed;
