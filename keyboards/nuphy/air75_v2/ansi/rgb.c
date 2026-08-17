@@ -844,4 +844,10 @@ void led_show(void) {
     side_ws2812_refresh();
     normal_led_process();
     realtime_led_process();
+
+    // With RGB Matrix animation suspended at zero brightness, flush only
+    // explicit status-indicator changes made by realtime_led_process().
+    if (rgb_matrix_get_val() == 0) {
+        rgb_matrix_update_pwm_buffers();
+    }
 }

@@ -548,16 +548,24 @@ void post_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-bool rgb_matrix_indicators_kb(void) {
-    if (!rgb_matrix_indicators_user()) {
-        return false;
+void matrix_scan_kb(void) {
+    static bool brightness_suspended = false;
+
+    if (rgb_matrix_get_val() == 0) {
+        if (!rgb_matrix_get_suspend_state()) {
+            rgb_matrix_set_suspend_state(true);
+        }
+        brightness_suspended = true;
+    } else if (brightness_suspended) {
+        rgb_matrix_set_suspend_state(false);
+        brightness_suspended = false;
     }
 
-    // low power mode
-    power_save();
-    // power down unused LEDs
-    led_power_handle();
-    return true;
+    matrix_scan_user();
+}
+
+bool rgb_matrix_indicators_kb(void) {
+    return rgb_matrix_indicators_user();
 }
 
 /* qmk keyboard post init */
@@ -596,6 +604,10 @@ void housekeeping_task_kb(void) {
     user_key_press();
 //
     led_show();
+
+    // Keep power management active while RGB rendering is paused at zero brightness.
+    power_save();
+    led_power_handle();
 
 #ifndef NO_DEBUG
     user_debug();
