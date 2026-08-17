@@ -19,26 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static uint8_t queue_head = 0;
 static uint8_t queue_tail = 0;
+static uint8_t queue_count = 0;
 
-static report_buffer_t buffer_queue[RF_QUEUE_SIZE + 2] = {0};
+static report_buffer_t buffer_queue[RF_QUEUE_SIZE] = {0};
 
 static bool rf_queue_is_empty(void) {
-    return queue_head == queue_tail;
+    return queue_count == 0;
 }
 
 static void clear_rf_queue(void) {
     memset(buffer_queue, 0, sizeof(buffer_queue));
     queue_head = 0;
     queue_tail = 0;
+    queue_count = 0;
 }
 
 static bool enqueue_rf_report(report_buffer_t *report) {
-    uint8_t next = (queue_head + 1) % RF_QUEUE_SIZE;
-    buffer_queue[queue_head] = *report;
-    queue_head               = next;
-    if (next == queue_tail) { // queue is full.
-        return false;
+    if (queue_count == RF_QUEUE_SIZE) {
+        // Reports represent the current input state, so retain the newest one.
+        queue_tail = (queue_tail + 1) % RF_QUEUE_SIZE;
+    } else {
+        queue_count++;
     }
+
+    buffer_queue[queue_head] = *report;
+    queue_head               = (queue_head + 1) % RF_QUEUE_SIZE;
     return true;
 }
 
@@ -48,6 +53,7 @@ static bool dequeue_rf_report(report_buffer_t *report) {
     }
     *report    = buffer_queue[queue_tail];
     queue_tail = (queue_tail + 1) % RF_QUEUE_SIZE;
+    queue_count--;
     return true;
 }
 
