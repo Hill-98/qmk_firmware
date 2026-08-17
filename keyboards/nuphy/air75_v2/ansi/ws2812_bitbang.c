@@ -1,4 +1,5 @@
 #include "ws2812_driver.h"
+#include "uart.h"
 
 
 ws2812_led_t ws2812_leds[WS2812_LED_COUNT];
@@ -48,7 +49,9 @@ void ws2812_set_color_all(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 void ws2812_flush(void) {
-    if (!flush_rgb_leds) { return; }
+    // A full WS2812 frame masks UART interrupts. Let the RF receive task drain
+    // already-pending bytes first, then refresh on a later RGB matrix tick.
+    if (!flush_rgb_leds || uart_available()) { return; }
     // this code is very time dependent, so we need to disable interrupts
     chSysLock();
 

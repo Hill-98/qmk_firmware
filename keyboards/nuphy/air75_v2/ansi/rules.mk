@@ -13,4 +13,3 @@ OPT = s $(GCC_EXTRA_OPTIONS)
 
 CUSTOM_MATRIX = lite
 SRC += matrix.c
-
