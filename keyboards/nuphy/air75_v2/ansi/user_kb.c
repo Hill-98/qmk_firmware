@@ -687,6 +687,13 @@ void led_power_handle(void) {
         pwr_rgb_led_off();
     }
 
+    if (user_config.ee_side_light == 0 && is_side_ws2812_off()) {
+        pwr_side_led_off();
+        flush_side_leds = false;
+        rgb_interval = 0;
+        return;
+    }
+
     if (!is_side_ws2812_off()) {
         pwr_side_led_on();
         led_debounce = 4;

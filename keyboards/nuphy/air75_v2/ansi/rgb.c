@@ -89,6 +89,24 @@ void clear_rgb(void) {
  * @brief  refresh side leds.
  */
 void side_ws2812_refresh(void) {
+    static bool side_lighting_disabled = false;
+
+    if (user_config.ee_side_light == 0) {
+        if (!side_lighting_disabled) {
+            side_ws2812_set_color_strip(LEFT_SIDE + RIGHT_SIDE, RGB_OFF);
+            side_lighting_disabled = true;
+        }
+
+        // Keep the side LEDs off until a system indicator writes a color.
+        if (is_side_ws2812_off()) {
+            pwr_side_led_off();
+            flush_side_leds = false;
+            return;
+        }
+    } else {
+        side_lighting_disabled = false;
+    }
+
     if (!is_side_ws2812_off() || (user_config.ee_side_light > 0 && user_config.ee_side_mode != SIDE_OFF)) {
         pwr_side_led_on(); // power on side LED before refresh
     }
@@ -827,4 +845,3 @@ void led_show(void) {
     normal_led_process();
     realtime_led_process();
 }
-
