@@ -64,6 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define EECONFIG_KB_DATA_SIZE               26
 #define GPIO_INPUT_PIN_DELAY                12
 #define RF_QUEUE_SIZE                       64
+#define RF_STATUS_SYNC_INTERVAL             200
+#define RF_STATUS_SYNC_USB_INTERVAL         5000
 
 #define OS_DETECTION_DEBOUNCE              250
 #define OS_DETECTION_KEYBOARD_RESET

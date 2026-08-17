@@ -435,8 +435,9 @@ uint8_t uart_send_cmd(uint8_t cmd, uint8_t wait_ack, uint8_t delayms) {
 void dev_sts_sync(void) {
     static uint32_t interval_timer  = 0;
     static uint8_t  link_state_temp = RF_DISCONNECT;
+    uint32_t sync_interval = dev_info.link_mode == LINK_USB ? RF_STATUS_SYNC_USB_INTERVAL : RF_STATUS_SYNC_INTERVAL;
 
-    if (timer_elapsed32(interval_timer) < 200) { return; }
+    if (!f_rf_reset && !f_send_channel && timer_elapsed32(interval_timer) < sync_interval) { return; }
     interval_timer = timer_read32();
 
     if (f_rf_reset) {
