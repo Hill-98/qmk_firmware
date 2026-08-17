@@ -645,8 +645,9 @@ void game_config_reset(uint8_t save_to_eeprom) {
 }
 
 void power_save(void) {
-    static uint16_t power_check_timer      = 0;
+    static uint32_t power_check_timer      = 0;
     if (timer_elapsed32(power_check_timer) < 5000) { return; }
+    power_check_timer = timer_read32();
 
     if (dev_info.rf_battery > low_bat_level && rgb_power_save == 1) {
         if (game_mode_enable) {
