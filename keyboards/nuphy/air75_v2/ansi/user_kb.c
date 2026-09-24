@@ -57,9 +57,6 @@ uint16_t       f_gmode_reset_press     = 0;
 uint32_t       sys_show_timer          = 0;
 uint32_t       sleep_show_timer        = 0;
 
-uint16_t       left_pressed            = 0;
-uint16_t       right_pressed           = 0;
-
 host_driver_t *m_host_driver           = 0;
 
 uint16_t       link_timeout            = T_MIN;
@@ -188,10 +185,6 @@ void user_key_press(void) {
             f_gmode_reset_press = 0;
         }
     }
-
-    // SnapTap Function
-    if (left_pressed)  {   left_pressed++; }
-    if (right_pressed) {  right_pressed++; }
 
     // Toggle RF Delay
     if (f_rf_dfu_press) {

@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 char            socd_type[4][14] = { "disabled", "cancellation", "exclusion", "nullification" };
 
+static const uint16_t socd_keys[] = { SOCD_KEYS };
+static bool           socd_held[sizeof_array(socd_keys)];
+
 /* qmk pre-process record */
 bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
     no_act_time      = 0;
@@ -40,29 +43,26 @@ bool pre_process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
 }
 
-bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
-    if (user_config.socd_mode == 0) { return true; }
-    uint8_t socd_array[] = { SOCD_KEYS };
-    for (uint8_t idx = 0; idx < sizeof_array(socd_array); ++idx) {
-        if ( keycode != socd_array[idx] ) { continue; }
+/**
+ * @brief SOCD handling. SOCD_KEYS is a list of opposing pairs (A/D, Left/Right, Up/Down);
+ *        each pair is tracked independently.
+ */
+static bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
+    for (uint8_t idx = 0; idx < sizeof_array(socd_keys); ++idx) {
+        if (keycode != socd_keys[idx]) { continue; }
 
-        if (idx % 2 == 0) {
-            left_pressed = record->event.pressed;
-            idx++;
-        } else {
-            right_pressed = record->event.pressed;
-            idx--;
-        }
+        uint8_t opposite = idx ^ 1;
+        socd_held[idx]   = record->event.pressed;
+
+        if (user_config.socd_mode == 0 || !socd_held[opposite]) { return true; }
 
         if (record->event.pressed) {
-            if (right_pressed + left_pressed > 2) {
-                unregister_code(socd_array[idx]);
-                if (user_config.socd_mode == 3) { return false; }
-            }
-        } else {
-            if (right_pressed + left_pressed > 2) {
-                if (user_config.socd_mode >= 2) { register_code(socd_array[idx]); }
-            }
+            // New key wins (1, 2) or both are nullified (3).
+            unregister_code(socd_keys[opposite]);
+            if (user_config.socd_mode == 3) { return false; }
+        } else if (user_config.socd_mode >= 2) {
+            // Restore the key that is still held (2, 3).
+            register_code(socd_keys[opposite]);
         }
         return true;
     }
