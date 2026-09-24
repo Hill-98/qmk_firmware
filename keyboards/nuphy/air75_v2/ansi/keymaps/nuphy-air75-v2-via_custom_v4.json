@@ -48,43 +48,6 @@
 					"Spiral Val.",
 					"Cycle All",
 					"Cycle Left/Right",
-					"Cycle Up/Down",
-					"Cycle Out/In",
-					"Cycle Out/In Dual",
-					"Rainbow Moving Chevron",
-					"Cycle Pinwheel",
-					"Cycle Spiral",
-					"Dual Beacon",
-					"Rainbow Beacon",
-					"Rainbow Pinwheels",
-					"Flower Blooming",
-					"Raindrops",
-					"Jellybean Raindrops",
-					"Hue Breathing",
-					"Hue Pendulum",
-					"Hue Wave",
-					"Pixel Fractal",
-					"Pixel Flow",
-					"Pixel Rain",
-					"Typing Heatmap",
-					"Digital Rain",
-					"Reactive Simple",
-					"Reactive",
-					"Reactive Wide",
-					"Reactive Multiwide",
-					"Reactive Cross",
-					"Reactive Multicross",
-					"Reactive Nexus",
-					"Reactive MultiNexus",
-					"Splash",
-					"MultiSplash",
-					"Solid Splash",
-					"Solid MultiSplash",
-					"Starlight",
-					"Starlight Dual Hue",
-					"Starlight Dual Sat",
-					"Riverflow",
-					"Effect Max",
 					"Game Mode"
 				]
 			},
@@ -236,8 +199,8 @@
 			"shortName": "Numlock_Ind"
 		},
 		{
-			"name": "Caps_Word\nTrigger",
-			"title": "Trigger Caps_Word",
+			"name": "Unused\n(CapsWord)",
+			"title": "Unused (Caps Word was removed)",
 			"shortName": "Caps_Word"
 		},
 		{
@@ -291,8 +254,8 @@
 			"shortName": "Socd_Tog"
 		},
         {
-			"name": "Keybord\nLock",
-			"title": "Trigger Keybord lock",
+			"name": "Unused\n(KeyLock)",
+			"title": "Unused (keyboard lock was removed)",
 			"shortName": "Key_Lock"
 		}
 	]
