@@ -88,6 +88,12 @@ void matrix_io_delay(void) {
     wait_us(io_wait);
 }
 
+// Upper bound for the "all columns high" wait, so a shorted/stuck column
+// cannot hang the scan loop (~0.5 ms at 48 MHz).
+#ifndef MATRIX_COL_SETTLE_LIMIT
+#    define MATRIX_COL_SETTLE_LIMIT 1000
+#endif
+
 // Only need to scan the result into current_matrix, and return changed.
 uint8_t matrix_scan_custom(matrix_row_t current_matrix[]) {
     bool changed = false;
@@ -95,8 +101,9 @@ uint8_t matrix_scan_custom(matrix_row_t current_matrix[]) {
     // Set col, read rows
 
     for (uint8_t current_row = 0; current_row < MATRIX_ROWS; current_row++) {
-        uint8_t stable_threshold = MATRIX_DEBOUNCE;
-        while (stable_threshold > 0) { // Wait for all Col signals to go HIGH
+        uint8_t  stable_threshold = MATRIX_DEBOUNCE;
+        uint16_t settle_limit     = MATRIX_COL_SETTLE_LIMIT;
+        while (stable_threshold > 0 && settle_limit--) { // Wait for all Col signals to go HIGH
             stable_threshold = ((((palReadPort(PAL_PORT(A0)) & colA_bits) ^ colA_bits) | ((palReadPort(PAL_PORT(B0)) & colB_bits) ^ colB_bits)) == 0) ? (stable_threshold - 1) : MATRIX_DEBOUNCE;
         }
 
