@@ -348,7 +348,8 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case NUMLOCK_INS:
             if (record->event.pressed) {
-                f_numlock_press = 1;
+                f_numlock_press     = 1;
+                numlock_press_timer = timer_read();
                 if (get_mods() & MOD_MASK_CSA) {
                     tap_code(KC_INS);
                     f_numlock_press = 0;

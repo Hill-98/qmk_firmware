@@ -103,7 +103,6 @@ typedef enum {
 
 #define RF_POWER_DOWN_DELAY       (dev_info.link_mode == LINK_RF_24 ? 5 : 30)
 
-#define MICRO_PRESS_DELAY         5
 #define SMALL_PRESS_DELAY         10
 #define MEDIUM_PRESS_DELAY        30
 #define LONG_PRESS_DELAY          50
@@ -222,6 +221,7 @@ extern bool               f_rf_new_adv_ok;
 extern uint32_t           no_act_time;
 extern uint16_t           link_timeout;
 extern uint16_t           f_numlock_press;
+extern uint16_t           numlock_press_timer;
 extern uint16_t           f_gmode_reset_press;
 extern bool               f_rf_sleep;
 extern bool               f_wakeup_prepare;

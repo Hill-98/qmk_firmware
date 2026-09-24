@@ -51,8 +51,8 @@ uint16_t       f_rf_sw_press           = 0;
 uint16_t       f_rf_dfu_press          = 0;
 uint16_t       f_rgb_test_press        = 0;
 uint16_t       f_dev_reset_press       = 0;
-uint16_t       f_caps_word_tg          = 0;
 uint16_t       f_numlock_press         = 0;
+uint16_t       numlock_press_timer     = 0;
 uint16_t       f_gmode_reset_press     = 0;
 uint32_t       sys_show_timer          = 0;
 uint32_t       sleep_show_timer        = 0;
@@ -106,6 +106,12 @@ void set_link_mode(void) {
  * @brief  long press key process.
  */
 void user_key_press(void) {
+    // NumLock hold (checked every loop for accurate timing)
+    if (f_numlock_press && timer_elapsed(numlock_press_timer) >= NUMLOCK_HOLD_TIME) {
+        f_numlock_press = 0;
+        tap_code(KC_NUM);
+    }
+
     if (long_press_timer < 10) { return; }
     long_press_timer = 0;
 
@@ -168,14 +174,6 @@ void user_key_press(void) {
         }
     }
 
-    // NumLock Press
-    if (f_numlock_press) {
-        f_numlock_press++;
-        if (f_numlock_press > MICRO_PRESS_DELAY) {
-            tap_code(KC_NUM);
-            f_numlock_press = 0;
-        }
-    }
     // Trigger Game Mode Reset
     if (f_gmode_reset_press) {
         f_gmode_reset_press++;
