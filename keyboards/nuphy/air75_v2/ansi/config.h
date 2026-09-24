@@ -50,25 +50,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WAIT_US_TIMER                       GPTD14
 // #undef USE_CIE1931_CURVE
 
-/*
-#define WS2812_PWM_DRIVER PWMD3
-#define WS2812_PWM_CHANNEL 2
-#define WS2812_PWM_PAL_MODE 1
-#define WS2812_DMA_STREAM STM32_DMA1_STREAM3
-#define WS2812_DMA_CHANNEL 3
-*/
-// #define WS2812_PWM_TARGET_PERIOD 800000
-
-#define WS2812_SPI_USE_CIRCULAR_BUFFER
-
 #define EECONFIG_KB_DATA_SIZE               26
 #define GPIO_INPUT_PIN_DELAY                12
 #define RF_QUEUE_SIZE                       64
 #define RF_STATUS_SYNC_INTERVAL             200
 #define RF_STATUS_SYNC_USB_INTERVAL         5000
 
-#define OS_DETECTION_DEBOUNCE              250
-#define OS_DETECTION_KEYBOARD_RESET
+// Each queued report is re-sent this many times, at least this many ms apart,
+// while the queue is replayed after wake-up / reconnect.
+#define RF_QUEUE_REPEAT_COUNT               4
+#define RF_QUEUE_REPEAT_INTERVAL            2
+
+// Hold time (ms) for NUMLOCK_INS to send Num Lock instead of Insert.
+#define NUMLOCK_HOLD_TIME                   300
 
 // remove unused QMK functions to save space
 /*

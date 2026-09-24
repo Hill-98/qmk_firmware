@@ -48,7 +48,7 @@
     },
     "ws2812": {
         "pin": "A7",
-        "driver": "bitbang"
+        "driver": "custom"
     },
     "diode_direction": "COL2ROW",
     "rgb_matrix": {
@@ -79,8 +79,7 @@
           "band_spiral_sat": true,
           "band_spiral_val": true,
           "cycle_all": true,
-          "cycle_left_right": true,
-          "effect_max": true
+          "cycle_left_right": true
         },
         "layout": [
             {"matrix": [0, 0], "x": 0, "y": 0, "flags": 4},

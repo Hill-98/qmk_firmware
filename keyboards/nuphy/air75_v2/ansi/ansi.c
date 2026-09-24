@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "user_kb.h"
 #include "ansi.h"
-#include "redefine.h"
 #include "mcu_pwr.h"
 #include "version.h"
 
@@ -70,8 +69,11 @@ bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-/* qmk process record user*/
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+/**
+ * @brief Keycodes whose changes must be persisted (delayed EEPROM write)
+ *        and keycodes blocked in game mode.
+ */
+static bool process_record_settings(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case SIDE_VAI:
@@ -142,6 +144,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
     if (!process_record_user(keycode, record)) {
+        return false;
+    }
+
+    if (!process_record_settings(keycode, record)) {
         return false;
     }
 
