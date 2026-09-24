@@ -1,160 +1,221 @@
 # Customizations & Fixes
 
-The following customizations were applied on top of the stock firmware. 
+Custom firmware for the NuPhy Air75 V2 (ANSI). The shortcuts below match the default keymap in
+`keymaps/default/keymap.c`. If you remap keys in VIA, shortcuts move with the keycodes.
 
--  Fn + M + O Changes the side light to display on either left side or right side or alternating sides every 1 minute.
+## Shortcuts
 
--  Numlock indicator using side leds while color
+`M layer` = hold **Fn + Right Shift**, then press the key.
+"Hold 3 s" means keep the key pressed for about 3 seconds.
 
--  FN + M + N shorcut will change the led indicator from side leds to KC_NUM key. If KC_NUM does not exist it will look for KC_INS and NUMLOCK_INS
+### Base layer
 
--  New custom key: NUMLOCK_INS. When held for more than 300ms it will trigger NUM_LOCK when pressed it will act as KC_INS
+| Key | Function |
+|---|---|
+| Caps Lock | Tap: Caps Lock. Hold: Left Ctrl |
+| Home / End (Mac mode) | Tap: Ctrl+A / Ctrl+E (line start / end). Double tap: Home / End |
 
--  New algorithm to prevent unnecessary EEPROM writes. When you change RGB modes or side lights it will only save the setting to EEPROM after 30 seconds. <br />
-   If for instance your need to press mode button for 5 times to reach your favourite RGB effect, normally you will get 1 EEPROM save for each press (5 EEPROM writes). <br />
-   With the new algorithm you will get 1 write to EEPROM after 40 seconds from last press. As a side efect if you change something and you shutdown the keyboard immediately you will lose the change. <br />
+### Fn layer
 
--  Bluetooth and RF will signal on corresponding number keys when trying to connect (Blue color and keys 1 to 3 for BT_1 to BT_3 or Green color and key 4 when it is trying to connect using 2.4G)
+| Keys | Win mode | Mac mode |
+|---|---|---|
+| Fn + 1 / 2 / 3 | Bluetooth 1 / 2 / 3. Hold 3 s: pair | same |
+| Fn + 4 | 2.4G dongle. Hold 3 s: pair | same |
+| Fn + F1 / F2 | – | Screen brightness down / up |
+| Fn + F3 | – | Mission Control |
+| Fn + F4 | – | Spotlight (Cmd+Space) |
+| Fn + F5 | – | Dictation |
+| Fn + F6 | – | Do Not Disturb |
+| Fn + F7 / F8 / F9 | Previous / Play-Pause / Next | same |
+| Fn + F10 / F11 / F12 | Mute / Volume down / Volume up | same |
+| Fn + Print Screen | – | Area screenshot (Cmd+Shift+4) |
+| Fn + W / A / S / D | Arrow keys | same |
+| Fn + Q / E | Home / End | Tap: Ctrl+A / Ctrl+E. Double tap: Home / End |
+| Fn + [ / ] | Page Up / Page Down | same |
+| Fn + Z / X / C / V | Ctrl + Z / X / C / V | Cmd + Z / X / C / V |
+| Fn + Home / End key | – | Home / End |
+| Fn + ↑ / ↓ | Key backlight brightness up / down | same |
+| Fn + ← | Next key backlight effect | same |
+| Fn + → | Key backlight hue | same |
 
--  Side light brightness levels are now 7 (instead of 6) from 0 (disabled) to 6 (full). A new lower step has been introduced. Default level after reset is 1 (the lowest ilumination possible for side leds)
+Bluetooth / 2.4G keys only work with the mode switch set to wireless.
 
--  The system indicators now have 3 levels of brightness (before there was only 1 level) that are dependend on the side light brightness. Thus for example capslock will no longer light at full brightness if side leds have a lower brightness selected.
+### M layer (Fn + Right Shift + key)
 
--  The custom MAC keys now have double functionality: <br />
-<pre>    MAC_VOICE if Mac mode selected and F5             if Win mode is selected 
-    TASK      if Mac mode selected and KC_CALC        if Win mode is selected 
-    SEARCH    if Mac mode selected and KC_LCTL + KC_F if Win mode is selected 
-    PRT_SCR   if Mac mode selected and PrintScreen    if Win mode is selected 
-    PRT_AREA  if Mac mode selected and PrintScreen    if Win mode is selected </pre>
+| Key | Function |
+|---|---|
+| Esc | Reboot. Keep Esc held while it restarts to enter the bootloader |
+| F1 | Toggle debug output (QMK console) |
+| F2 | Tap: cycle the RF wake-up delay (80 / 280 / 480 / 680 / 880 ms). Hold 3 s: RF module DFU mode (USB only) |
+| F11 / F12 | Debounce time down / up |
+| Delete | Hold 3 s: factory reset |
+| - / = | Light sleep timeout down / up |
+| Backspace | Sleep mode (green / yellow / red) |
+| ] | Deep sleep now (battery only) |
+| \ | Toggle battery level display on the right side LEDs |
+| D | Debounce algorithm |
+| G | Tap: game mode on. Hold 3 s: reset game mode settings |
+| K | SOCD mode |
+| N | Num Lock indicator: off / side LEDs / Insert key LED |
+| O | Side LEDs: both sides / right only / left only / alternate every minute |
+| , / . | Side LED animation slower / faster |
+| ↑ / ↓ | Side LED brightness up / down |
+| ← | Side LED mode (wave / spectrum / static / breathing / off) |
+| → | Side LED color |
+| Win (Mac: Cmd) | GUI key lock on / off |
 
--  Fn + B will show current battery levels using numbers from 1 to 0 (0 means 100%). The color will be red, yellow, light green, dark green) based on battery level. <br />
-   Last led will have a different color based on battery percentage as well. <br />
-   Example: <br />
-   if 1 to 4 lights up and the last led that lights up 5 is dark green color you will have between 47 and 50% battery <br />
-   if 1 to 4 lights up and the last led that lights up 5 is light green color you will have between 44 and 46 % battery <br />
-   if 1 to 4 lights up and the last led that lights up 5 is red color you will have between 41 and 43 % battery <br />
+### Game mode
 
--  Default startup LED brightness is set to half of max. Default RGB effect is RGB_MATRIX_CYCLE_LEFT_RIGHT
+Game mode uses its own layer. Caps Lock is a plain Caps Lock and the bottom row is in Windows order
+(Ctrl, Win, Alt) in both OS modes. The M layer is not reachable in game mode.
 
--  Default tapping has been reduced to 2ms (from 8ms default)
+| Keys | Function |
+|---|---|
+| Fn + Esc | Tap: leave game mode. Hold 3 s: reset game mode settings |
+| Fn + 1 / 2 / 3 / 4 | Bluetooth 1 / 2 / 3, 2.4G. Hold 3 s: pair |
+| Fn + F7 … F12 | Media keys |
 
--  LTO enabled to reduce firmware size
+Fn + \ is mapped to the battery display on the game layer, but the firmware blocks it in game mode.
 
--  Side light algorithms are modified in order to reduce firmware size and to make animations more smooth.
+### Keycodes not in the default keymap
 
--  Enhance keyboard reports transmission logic to greatly reduce stuck/lost key strokes. It may still occasionally drop/repeat keys but it's rare. (algorithm from jincao1 with small modifications)
+These exist and can be assigned in VIA: `LNK_USB`, `PRT_SCR` (Mac: full screenshot, Win: Print Screen),
+`BAT_NUM` (battery level on the number row while held), `RGB_TEST`, `NUMLOCK_INS` (tap: Insert,
+hold 300 ms: Num Lock), `WIN_LOCK`, and the QMK RGB keys for previous effect, hue down, saturation,
+speed and on/off. `CAPS_WORD` and `KEYBORD_LOCK` do nothing and only keep VIA keycode numbering stable.
 
--  Fix keyboard randomly crashing/freezing (algorithm from jincao1 with small modifications)
+## Behaviour
 
--  MCU Deep / Light sleep algorithm is applied using code from nuphy / jincao1
+### Indicators
 
--  Fix LED lights not powering down when not used.
+-  Caps Lock lights the left side LEDs. Num Lock uses white on the side LEDs or the Insert key LED,
+   depending on the Num Lock indicator mode (Fn + Right Shift + N).
+-  While connecting, the left side LEDs blink and the matching number key lights up: blue on 1–3 for
+   Bluetooth, green on 4 for 2.4G.
+-  Status indicators scale with the side LED brightness, so they are not full brightness when the side LEDs are dimmed.
+-  Settings keys confirm on their own key: debounce type on D, game mode on G, SOCD mode on K,
+   RF wake-up delay on F2, GUI lock on the Win key, debounce time and sleep timeout on F1–F10.
+-  Battery display (Fn + Right Shift + \): the right side LEDs show the level. Red when at or below 30 %.
+   When the battery is low the right side LEDs breathe red.
+-  `BAT_NUM` (not mapped by default) shows the battery level on keys 1–0 while held (0 = 100 %).
+   Color: red below 20 %, orange up to 50 %, yellow up to 80 %, green above. The last lit key shows the
+   units digit: green = exact tens, red 1–3, orange 4–6, green 7–9.
 
--  Fix keystrokes being lost on wake. Wake keystrokes will appear after a very short delay while board re-establishes connection. BT may not be as reliable as the dongle. <br />
-   This is achieved through a buffer of 64 key actions (key down and key up are 2 actions). The buffer is cleared if connection is not established within 1s after the last action. <br />
-   Key events after the buffer is full will also be dropped. (Buffer algorithm taken from jincao1) <br />
+### Side LEDs
 
--  FN + M + F1 => enables Debug mode. This mode will show messages in console including matrix scan rate and various settings changes
+-  7 brightness levels, from 0 (off) to 6. Default after reset is 1.
+-  Modes: wave, spectrum, static, breathing, off. Default is wave in rainbow colors.
 
--  FN + M + ESC => will reboot keyboard. If you do not unpress the ESC key, it will enter bootmode so you can load new firmware.
+### Key backlight
 
--  FN + M + F2 => Long press will enter DFU mode so you can upload new RF firmware. The key will remain lit up as red until you reboot the keyboard. This mode is activated only when keyboard is connected to laptop/computer via USB. Short press will change the delay after keyboard wakeup (from 80 ms - 880 ms in 200 ms increments). 80ms recommended for RF 1.x, 480ms recommended for RF 2.x.
+-  Default effect is Cycle Left/Right at half brightness.
+-  Included effects: Solid Color, Alphas Mods, Gradient Up/Down, Gradient Left/Right, Breathing,
+   Band Sat., Band Val., Pinwheel Sat., Pinwheel Val., Spiral Sat., Spiral Val., Cycle All,
+   Cycle Left/Right and Game Keys (only ESC, W, A, S, D and the arrows lit). Other QMK effects were
+   removed to save flash.
+-  At brightness 0 the animation stops and the LED power is switched off.
+-  When the battery is low, the key backlight is turned off and side LEDs are dimmed to level 1 until it recovers.
 
--  All QMK animations are now included in this firmware
+### Settings storage
 
--  FN + M + ] => will trigger MCU deep sleep imediately (only if keyboard is not charging or connected via USB)
+-  Changes are written to EEPROM 30 seconds after the last change, so repeated key presses cause one write.
+-  Pending changes are also written right away when the keyboard goes to sleep and when game mode is toggled.
+   Switching the keyboard off within 30 seconds of a change still loses it.
 
--  FN + M + G => enabled GAME MODE. This Mode disables some rgb light functions to ensure maximum scan rate is achived. The G letter will light up green when mode is active and red when game mode is disabled. Long pressing FN + M + G will reset game mode settings to default. <br />
-   RGB animations and Side light animations can be modified by user. The new settings will be saved after 30 seconds. But the adjustment is limited.
+### Debounce
 
--  CAPS_WORD is enabled by default. Double press Left Shift key to activate it for 5 seconds. CAPS_LOCK will light up light blue. This function can be disabled (CAPS_WORD) when holding FN + M + CAPS_LOCK. Also by default this is disabled when GAME MODE is active.
+-  Default: 5 ms, asym_eager_defer_pk.
+-  Algorithms (Fn + Right Shift + D): asym_eager_defer_pk (green, default), sym_eager_pr (yellow),
+   sym_defer_pk variant (red).
+-  Time (Fn + Right Shift + F11 / F12), shown on F1–F10:
+   1–10 ms in steps of 1 (green), 12–30 ms in steps of 2 (yellow), 35–75 ms in steps of 5 (red), 100 ms (purple, F1–F10).
+   Example: 6 ms lights F1–F6 green, 18 ms lights F1–F4 yellow, 65 ms lights F1–F7 red.
+-  Game mode and normal mode keep separate debounce settings.
 
--  FM + M + WIN => Will Enable or Disable the WIN key (useful in some games) (also called WIN_LOCK function)
+### SOCD (Fn + Right Shift + K)
 
--  FN + M + K => SOCD_TOG This will allow you to choose the SOCD / Rapid Trigger / Key Cancelation mode (custom algorithm): <br />
+Applies to A/D, Left/Right and Up/Down, each pair independently. The key color shows the mode.
 
 (0) Disabled: <br />
 <pre>Keys   | .. | A. | AD | A.
 Report | .. | A. | AD | A. </pre>
- 
+
 (1) Cancellation: <br />
 <pre>Keys   | .. | A. | AD | A.
 Report | .. | A. | .D | .. ----- (D cancels A, no restore on D keyup) </pre>
- 
+
 (2) Exclusion: <br />
-<pre>Keys   | .. | A. | AD | A. 
+<pre>Keys   | .. | A. | AD | A.
 Report | .. | A. | .D | A. ----- (D excludes A, restores A on D keyup) </pre>
- 
+
 (3) Nullification: <br />
-<pre>Keys   | .. | A. | AD | A. 
+<pre>Keys   | .. | A. | AD | A.
 Report | .. | A. | .. | A. ----- (D nullifies A, neither registered, A restored on D keyup) </pre>
 
+### Game mode
 
--  Variable matrix scan rate in order to help with battery usage. After 10 second of idle time the Light MCU sleep is enabled and scan rate goes to ~ 700. After 30 seconds of idle time scan rate further decreases to ~ 300. <br />
-Matrix scan rate default: ~ 1700 - 1900 <br />
-Matrix scan rate keyboard is idle : ~ 300 - 700 <br />
-Matrix scan rate in GAME_MODE: ~ 3200 - 3900 <br />
+-  Maximizes scan rate: side LED animation and some indicators are disabled, and the keyboard never sleeps.
+-  Uses its own key backlight effect, brightness, side LED color and debounce settings. The default
+   keymap has no backlight, side LED or debounce keys on the game layer, so these can only be changed
+   by mapping the keys in VIA. Fn + Esc held for 3 s resets them to defaults.
 
--  Debounce is set by default to 5ms and debounce type is asym_eager_defer_pk 
+### Sleep
 
--  Debounce type can be modified by key DEBOUNCE_T (FN + M + D). <br />
-Debounce algorithms that can be selected are: <br />
-  asym_eager_defer_pk (this is the default) => GREEN light <br />
-  sym_eager_pr => YELLOW light <br />
-  sym_defer_pk (actually a variation of it) => RED light <br />
+Sleep mode is selected with Fn + Right Shift + Backspace. The right side LEDs flash the mode color.
+The keyboard never sleeps while connected via USB, while charging, or in game mode.
 
-- Debounce time is also selectable: <br />
-To select press: <br />
-  DEBOUNCE_D (FN + M + F11) to decrease <br />
-  DEBOUNCE_I (FN + M + F12) to increase <br />
- <br />
-the steps will be: <br />
-  1 from 1 - 10 => will light up F1-F10 in green <br />
-  2 from 12 - 30 => will light up F1-F10 in yellow <br />
-  5 from 35 - 75 => will light up F1-F10 in red <br />
-  and 100 ms (max) => will light up in purple <br />
- <br />
-Example: <br />
-  Debounce 6 => F1-F6 light up in green color <br />
-  Debounce 18 => F1-F4 light up in yellow color <br />
-  Debounce 65 => F1-F7 light up in red color <br />
-  Debounce 100 => F1-F12 in purple color <br />
- <br />
-  Setting for debounce (type and value in ms) are saved differently for game mode and normal mode so you will have 2 separate settings <br />
-  The settings are also show when transitioning from game mode to normal mode in QMK Console if debug is activated <br />
+| Mode | Behaviour |
+|---|---|
+| Green | 10 s idle: MCU light sleep (WFI), scan rate ~700. After the light sleep timeout (default 2 min): side LEDs off. 4 min later: deep sleep (MCU stop mode, RF sleeps) |
+| Yellow | After the light sleep timeout (default 6 min): side LEDs off, the RF module later powers down by itself. No MCU light or deep sleep |
+| Red | No sleep. LEDs stay on |
 
--  New RGB animation available (including in GAME mode). When selected it will light up: ESC, A , S ,D, W and arrow keys
+-  The light sleep timeout (Fn + Right Shift + - / =) goes from 1 to 100 minutes, with the same steps and
+   F-key display as the debounce time. Green and yellow modes keep separate values.
+-  After 30 s idle the matrix scan slows down (~300 scans/s) to save battery. Not on USB power or while charging.
+-  Entering deep sleep flashes the side LEDs blue (Bluetooth) or green (2.4G).
+-  Wireless key presses made while the keyboard wakes up are buffered (64 events) and sent once the link is
+   back. The buffer is dropped if the link is not restored within 6 s. The RF wake-up delay
+   (Fn + Right Shift + F2) should be 80 ms for RF firmware 1.x and 480 ms for 2.x.
 
--  New RGB commands are available but not set to any keys: RGB_RMOD, RGB_HUD, RGB_M_P, RGB_SAI, RGB_SAD, RGB_TOG
+### Scan rate
 
--  Light Sleep can be adjusted from 1 minute to 100 minutes using keys SLEEP_D and SLEEP_I (FN + M + '-' and FN + M + '+'). <br />
-   Adjustment are different depending on mode: <br />
-   Example: by default 2 minutes until light sleep when deep sleep is enabled (sleep mode green), 6 minutes when deep sleep disabled (sleep mode yellow), no adjustment for no sleep (sleep mode red). <br />
-   So you can setup up different settings based on sleep mode. The adjustment is similar to the example for debounce explained above. <br />
+| State | Matrix scans per second |
+|---|---|
+| Normal | ~1700–1900 |
+| Idle (battery) | ~300–700 |
+| Game mode | ~3200–3900 |
 
--  Version will be shown when Debug is enabled like (example): <br />
-    Keyboard: nuphy/air75_v2/ansi @ QMK 0.25.10-62-g2a4e8d | BUILD: 2024-07-09-09:31:29 (1e4798ae3e) <br />
+### Other
 
-- Keyboard had 3 sleep settings selectable via FN + ]. <br />
-  1. Side led green. Behaviour: <br />
- <br />
-   - After 10 seconds idle MCU goes to light sleep and matrix scan rate goes to ~ 700 <br />
-   - After 2 minutes (adjustable), side lights are turned off <br />
-   - After 6 minutes (4 minutes after side lights are turned off), RF goes to sleep (if you are connected via 2.4G), MCU goes do deep sleep. If you are connected via BT the RF will go to sleep after 30 minutes but the MCU will go to deep sleep after 6 minutes. <br />
- <br />
-  2. Side led yellow. Behaviour: <br />
-   - After 10 seconds idle MCU goes to light sleep and matrix scan rate goes to ~ 700 <br />
-   - After 6 minutes (adjustable), side lights are turned off <br />
-   - After 10 minutes (4 minutes after side lights are turned off), RF goes to sleep (if you are connected via 2.4G), if you are connected via BT the RF will go to sleep after 30 minutes. MCU does not go to deep sleep. <br />
- <br />
-  3. Side led red. Behaviour: <br />
-   - After 10 seconds idle MCU goes to light sleep and matrix scan rate goes to ~ 700 <br />
-   - Side lights do not go to sleep. RF goes to sleep after 30 minutes. MCU does not go to deep sleep <br />
- <br />
-  Side indicators will flash blue for 0.5s when board enters MCU deep sleep mode when on BT and will falsh green for 0.5s when on 2.4G, as an indicator. <br />
-  Keyboard will not enter sleep regardless of settings if it is charging or if it is connected via USB. <br />
-  Keyboard will not enter sleep if GAME MODE is active <br />
- <br />
+-  Tap keycode delay 2 ms (QMK default 8 ms). LTO enabled.
+-  Keyboard report transmission and crash fixes based on jincao1's work.
+-  With debug on, the build is printed to the console, for example:
+   `Keyboard: nuphy/air75_v2/ansi @ QMK 0.25.10-62-g2a4e8d | BUILD: 2024-07-09-09:31:29 (1e4798ae3e)`
+
+## Fork changes (2026-09)
+
+-  **Out-of-bounds LED writes / hang fixed.** Indicators look up key LEDs by keycode. When a keycode is not on
+   the keymap (for example `KC_CAPS` replaced by `LCTL_T(KC_CAPS)`) the lookup returned 255, which wrote past the
+   LED buffer every loop and could hang the keyboard. Such writes are now ignored.
+-  **SOCD fixed.** It only worked after the opposite key had been held for ~200 ms, and all three pairs shared one
+   state. Each pair is now tracked independently and SOCD applies immediately.
+-  **Caps Word removed.** It was disabled in QMK but its indicator and toggle were still active.
+-  **Settings saved before sleep and game mode switches**, instead of being lost.
+-  **Low-battery power save no longer overwrites saved brightness** when another setting is changed meanwhile.
+-  **Status indicators work with the key backlight toggled off.**
+-  **Wake-up interrupts are only armed during deep sleep.** They fired on every row scan, USB and LED data edge.
+-  **Lighter queue replay after wake-up:** each queued report is sent 4 times, 2 ms apart
+   (`RF_QUEUE_REPEAT_COUNT`, `RF_QUEUE_REPEAT_INTERVAL`), instead of 24 back-to-back sends.
+-  **No idle slowdown on USB power or while charging.**
+-  **Matrix scan cannot hang** on a stuck column (bounded wait).
+-  `NUMLOCK_INS` hold time is an accurate 300 ms (`NUMLOCK_HOLD_TIME`).
+-  Removed dead configuration: OS detection with automatic keyboard reset, Auto Shift, `redefine.c/h`.
+-  The keyboard no longer defines `process_record_user`, so keymaps can use it.
+-  VIA definition effect list matches the firmware.
+-  Key backlight stays on the bit-bang driver. SPI + DMA is not possible on this board: on STM32F072 it needs the
+   SCK pin, and both SPI1 SCK pins (A5, B3) are matrix columns.
+
 ## Author
 
 [@adi4086](https://github.com/adi4086)
