@@ -20,6 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ansi.h"
 #include "rf_queue.h"
 
+#ifndef RF_QUEUE_REPEAT_COUNT
+#    define RF_QUEUE_REPEAT_COUNT 4
+#endif
+#ifndef RF_QUEUE_REPEAT_INTERVAL
+#    define RF_QUEUE_REPEAT_INTERVAL 2
+#endif
+
 USART_MGR_STRUCT Usart_Mgr;
 #define RX_SBYTE Usart_Mgr.RXDBuf[0]
 #define RX_CMD   Usart_Mgr.RXDBuf[1]
@@ -93,8 +100,9 @@ void clear_report_buffer_and_queue(void) {
  */
 void uart_send_repeat_from_queue(void) {
     static uint32_t        dequeue_timer = 0;
+    static uint32_t        resend_timer  = 0;
     static uint8_t         f_send_delay  = 0;
-    static report_buffer_t report_buff   = {0};
+    static report_buffer_t report_buff   = {.repeat = UINT8_MAX};
 
     if (timer_elapsed32(dequeue_timer) > 12 && !rf_queue.is_empty()) {
         if (timer_elapsed32(dequeue_timer) < 20) { dequeue_delay += timer_elapsed32(dequeue_timer); }
@@ -109,10 +117,13 @@ void uart_send_repeat_from_queue(void) {
         dequeue_delay = 0;
         if (report_buff.length > 6) { byte_report_buff = report_buff; }
     }
-    if (report_buff.repeat < 24) {
-        wait_us(25);
+    // Re-send the current report a few times, spaced out, instead of back-to-back
+    // bursts that saturate the RF UART. The last report is then kept alive by
+    // the normal repeat logic in uart_send_report_repeat().
+    if (report_buff.repeat < RF_QUEUE_REPEAT_COUNT && (report_buff.repeat == 0 || timer_elapsed32(resend_timer) >= RF_QUEUE_REPEAT_INTERVAL)) {
         uart_send_report(report_buff.cmd, report_buff.buffer, report_buff.length);
         report_buff.repeat++;
+        resend_timer = timer_read32();
     }
 }
 
