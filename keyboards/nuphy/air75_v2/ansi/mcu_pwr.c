@@ -222,6 +222,13 @@ void matrix_scan_repeat(uint8_t repeat) {
  */
 void exit_deep_sleep(void) {
 
+#if !defined(DISABLE_MCU_SLEEP)
+    // Disarm the key wake-up lines: while awake, row scanning, WS2812 data (A7)
+    // and USB (A11/A12) would otherwise raise thousands of EXTI interrupts per second.
+    EXTI->IMR &= ~((uint32_t)0xFFFF);
+    EXTI->PR = 0xFFFF;
+#endif
+
     // Matrix initialization & Scan
     extern void matrix_init_custom(void);
     matrix_init_custom();

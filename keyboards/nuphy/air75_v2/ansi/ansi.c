@@ -593,7 +593,7 @@ void keyboard_post_init_kb(void) {
     // debug_keyboard = true;
     // debug_mouse    = true;
 #endif
-    interrupt_source_init();
+    // EXTI wake-up lines are only armed right before deep sleep (enter_deep_sleep()).
     keyboard_post_init_user();
 }
 
