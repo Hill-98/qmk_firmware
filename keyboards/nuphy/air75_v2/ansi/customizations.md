@@ -54,7 +54,6 @@ Bluetooth / 2.4G keys only work with the mode switch set to wireless.
 | ] | Deep sleep now (battery only) |
 | \ | Toggle battery level display on the right side LEDs |
 | D | Debounce algorithm |
-| G | Tap: game mode on. Hold 3 s: reset game mode settings |
 | K | SOCD mode |
 | N | Num Lock indicator: off / side LEDs / Insert key LED |
 | O | Side LEDs: both sides / right only / left only / alternate every minute |
@@ -64,25 +63,12 @@ Bluetooth / 2.4G keys only work with the mode switch set to wireless.
 | → | Side LED color |
 | Win (Mac: Cmd) | GUI key lock on / off |
 
-### Game mode
-
-Game mode uses its own layer. Caps Lock is a plain Caps Lock and the bottom row is in Windows order
-(Ctrl, Win, Alt) in both OS modes. The M layer is not reachable in game mode.
-
-| Keys | Function |
-|---|---|
-| Fn + Esc | Tap: leave game mode. Hold 3 s: reset game mode settings |
-| Fn + 1 / 2 / 3 / 4 | Bluetooth 1 / 2 / 3, 2.4G. Hold 3 s: pair |
-| Fn + F7 … F12 | Media keys |
-
-Fn + \ is mapped to the battery display on the game layer, but the firmware blocks it in game mode.
-
 ### Keycodes not in the default keymap
 
 These exist and can be assigned in VIA: `LNK_USB`, `PRT_SCR` (Mac: full screenshot, Win: Print Screen),
 `BAT_NUM` (battery level on the number row while held), `RGB_TEST`, `NUMLOCK_INS` (tap: Insert,
 hold 300 ms: Num Lock), `WIN_LOCK`, and the QMK RGB keys for previous effect, hue down, saturation,
-speed and on/off. `CAPS_WORD` and `KEYBORD_LOCK` do nothing and only keep VIA keycode numbering stable.
+speed and on/off. `CAPS_WORD`, `GAME_MODE` and `KEYBORD_LOCK` do nothing and only keep VIA keycode numbering stable.
 
 ## Behaviour
 
@@ -93,7 +79,7 @@ speed and on/off. `CAPS_WORD` and `KEYBORD_LOCK` do nothing and only keep VIA ke
 -  While connecting, the left side LEDs blink and the matching number key lights up: blue on 1–3 for
    Bluetooth, green on 4 for 2.4G.
 -  Status indicators scale with the side LED brightness, so they are not full brightness when the side LEDs are dimmed.
--  Settings keys confirm on their own key: debounce type on D, game mode on G, SOCD mode on K,
+-  Settings keys confirm on their own key: debounce type on D, SOCD mode on K,
    RF wake-up delay on F2, GUI lock on the Win key, debounce time and sleep timeout on F1–F10.
 -  Battery display (Fn + Right Shift + \): the right side LEDs show the level. Red when at or below 30 %.
    When the battery is low the right side LEDs breathe red.
@@ -111,15 +97,14 @@ speed and on/off. `CAPS_WORD` and `KEYBORD_LOCK` do nothing and only keep VIA ke
 -  Default effect is Cycle Left/Right at half brightness.
 -  Included effects: Solid Color, Alphas Mods, Gradient Up/Down, Gradient Left/Right, Breathing,
    Band Sat., Band Val., Pinwheel Sat., Pinwheel Val., Spiral Sat., Spiral Val., Cycle All,
-   Cycle Left/Right and Game Keys (only ESC, W, A, S, D and the arrows lit). Other QMK effects were
-   removed to save flash.
+   Cycle Left/Right. Other QMK effects were removed to save flash.
 -  At brightness 0 the animation stops and the LED power is switched off.
 -  When the battery is low, the key backlight is turned off and side LEDs are dimmed to level 1 until it recovers.
 
 ### Settings storage
 
 -  Changes are written to EEPROM 30 seconds after the last change, so repeated key presses cause one write.
--  Pending changes are also written right away when the keyboard goes to sleep and when game mode is toggled.
+-  Pending changes are also written right away when the keyboard goes to sleep.
    Switching the keyboard off within 30 seconds of a change still loses it.
 
 ### Debounce
@@ -130,7 +115,6 @@ speed and on/off. `CAPS_WORD` and `KEYBORD_LOCK` do nothing and only keep VIA ke
 -  Time (Fn + Right Shift + F11 / F12), shown on F1–F10:
    1–10 ms in steps of 1 (green), 12–30 ms in steps of 2 (yellow), 35–75 ms in steps of 5 (red), 100 ms (purple, F1–F10).
    Example: 6 ms lights F1–F6 green, 18 ms lights F1–F4 yellow, 65 ms lights F1–F7 red.
--  Game mode and normal mode keep separate debounce settings.
 
 ### SOCD (Fn + Right Shift + K)
 
@@ -152,17 +136,10 @@ Report | .. | A. | .D | A. ----- (D excludes A, restores A on D keyup) </pre>
 <pre>Keys   | .. | A. | AD | A.
 Report | .. | A. | .. | A. ----- (D nullifies A, neither registered, A restored on D keyup) </pre>
 
-### Game mode
-
--  Maximizes scan rate: side LED animation and some indicators are disabled, and the keyboard never sleeps.
--  Uses its own key backlight effect, brightness, side LED color and debounce settings. The default
-   keymap has no backlight, side LED or debounce keys on the game layer, so these can only be changed
-   by mapping the keys in VIA. Fn + Esc held for 3 s resets them to defaults.
-
 ### Sleep
 
 Sleep mode is selected with Fn + Right Shift + Backspace. The right side LEDs flash the mode color.
-The keyboard never sleeps while connected via USB, while charging, or in game mode.
+The keyboard never sleeps while connected via USB or while charging.
 
 | Mode | Behaviour |
 |---|---|
@@ -184,7 +161,6 @@ The keyboard never sleeps while connected via USB, while charging, or in game mo
 |---|---|
 | Normal | ~1700–1900 |
 | Idle (battery) | ~300–700 |
-| Game mode | ~3200–3900 |
 
 ### Other
 
@@ -201,7 +177,10 @@ The keyboard never sleeps while connected via USB, while charging, or in game mo
 -  **SOCD fixed.** It only worked after the opposite key had been held for ~200 ms, and all three pairs shared one
    state. Each pair is now tracked independently and SOCD applies immediately.
 -  **Caps Word removed.** It was disabled in QMK but its indicator and toggle were still active.
--  **Settings saved before sleep and game mode switches**, instead of being lost.
+-  **Settings saved before sleep**, instead of being lost.
+-  **Game mode removed**, including its layers, the `GAME_KEYS` effect and the separate game settings.
+   The `GAME_MODE` keycode and the 8 EEPROM bytes are kept unused, so VIA keycodes and saved settings
+   stay valid.
 -  **Low-battery power save no longer overwrites saved brightness** when another setting is changed meanwhile.
 -  **Status indicators work with the key backlight toggled off.**
 -  **Wake-up interrupts are only armed during deep sleep.** They fired on every row scan, USB and LED data edge.
