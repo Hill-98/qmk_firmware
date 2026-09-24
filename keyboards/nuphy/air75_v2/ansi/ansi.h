@@ -49,7 +49,7 @@ enum custom_keycodes {
 
     NUMLOCK_INS,
     NUMLOCK_IND,
-    CAPS_WORD,
+    CAPS_WORD,  // unused (Caps Word removed), kept so VIA keycode numbering stays stable
     WIN_LOCK,
     SLEEP_MODE,
     SLEEP_NOW,

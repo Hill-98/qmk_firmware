@@ -193,19 +193,6 @@ void user_key_press(void) {
     if (left_pressed)  {   left_pressed++; }
     if (right_pressed) {  right_pressed++; }
 
-    // Toggle Caps Word
-    if (f_caps_word_tg) {
-        f_caps_word_tg++;
-        if (f_caps_word_tg > SMALL_PRESS_DELAY) {
-            user_config.caps_word_enable = !user_config.caps_word_enable;
-            f_caps_word_tg = 0;
-#ifndef NO_DEBUG
-            dprintf("caps_word_state: %s\n", user_config.caps_word_enable ? "ON" : "OFF");
-#endif
-            signal_rgb_led(user_config.caps_word_enable * 3, led_idx.KC_CAPS, UINT8_MAX, CAPS_WORD_IDLE_TIMEOUT);
-        }
-    }
-
     // Toggle RF Delay
     if (f_rf_dfu_press) {
         f_rf_dfu_press++;
@@ -510,7 +497,6 @@ void game_mode_tweak(void)
 }
 
 void reset_led_idx(void) {
-    led_idx.KC_CAPS  = get_led_idx(KC_CAPS);
     led_idx.KC_LGUI  = get_led_idx(KC_LGUI);
 
     uint16_t numlock_keys[4] = { KC_NUM, NUMLOCK_INS, KC_INS, KC_MINS };
@@ -620,7 +606,7 @@ void user_config_reset(void) {
     user_config.sleep_mode              = 1;
     user_config.light_sleep             = 2;
     user_config.alt_light_sleep         = 6;
-    user_config.caps_word_enable        = 1;
+    user_config.reserved_caps_word      = 0;
     user_config.numlock_state           = 1;
     user_config.socd_mode               = 0;
     user_config.rf_delay_step           = 2;

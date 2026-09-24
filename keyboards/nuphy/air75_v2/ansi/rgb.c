@@ -755,22 +755,6 @@ void rgb_led_indicator(void) {
     }
 }
 
-
-void caps_word_show(void) {
-    static bool caps_word_rgb_on = 0;
-    if (game_mode_enable || !user_config.caps_word_enable) {
-        if (caps_word_rgb_on) {
-            caps_word_rgb_on = 0;
-            rgb_matrix_set_color(led_idx.KC_CAPS, RGB_OFF);
-        }
-        return;
-    } else {
-        rgb_required     = 2;
-        caps_word_rgb_on = 1;
-        rgb_matrix_set_color(led_idx.KC_CAPS, RGB_CYAN);
-    }
-}
-
 void numlock_rgb_show(void) {
     static bool num_lock_rgb_on = 0;
     if (led_idx.KC_NUM >= RGB_MATRIX_LED_COUNT) { return; }
@@ -849,7 +833,6 @@ void normal_led_process(void) {
 void realtime_led_process(void) {
     rf_led_show();
     rgb_led_indicator();
-    caps_word_show();
     numlock_rgb_show();
     bat_num_led();
 }

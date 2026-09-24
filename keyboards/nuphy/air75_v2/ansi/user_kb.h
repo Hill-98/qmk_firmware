@@ -161,7 +161,7 @@ typedef struct
     uint8_t ee_side_colour;
     uint8_t ee_side_one;
     uint8_t sleep_mode;
-    uint8_t caps_word_enable;
+    uint8_t reserved_caps_word;     // unused, kept for EEPROM layout compatibility
     uint8_t numlock_state;
     uint8_t debounce_ms;
     uint8_t debounce_type;
@@ -185,7 +185,6 @@ _Static_assert(sizeof(user_config_t) == EECONFIG_KB_DATA_SIZE, "Mismatch in user
 
 typedef struct
 {
-    uint8_t KC_CAPS;
     uint8_t KC_LGUI;
     uint8_t KC_NUM;
     uint8_t KC_D;
@@ -214,7 +213,6 @@ extern uint16_t           f_rf_dfu_press;
 extern uint16_t           f_dev_reset_press;
 extern bool               f_bat_num_show;
 extern uint16_t           f_rgb_test_press;
-extern uint16_t           f_caps_word_tg;
 
 extern uint8_t            rf_sw_temp;
 extern uint16_t           rf_sw_press_delay;

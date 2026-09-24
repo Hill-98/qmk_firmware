@@ -99,7 +99,6 @@ static bool process_record_settings(uint16_t keycode, keyrecord_t *record) {
         case SLEEP_MODE:
         case SLEEP_I:
         case SLEEP_D:
-        case CAPS_WORD:
             if (game_mode_enable) { return false; }
             call_update_eeprom_data(&user_update);
             return true;
@@ -364,10 +363,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 user_config.numlock_state = (user_config.numlock_state + 1) % (3 - game_mode_enable);
             }
-            return false;
-
-        case CAPS_WORD:
-            f_caps_word_tg = record->event.pressed;
             return false;
 
         case KC_LGUI:

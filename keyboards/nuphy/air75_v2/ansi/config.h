@@ -73,5 +73,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #undef SPACE_CADET_ENABLE
 */
 
-#define AUTO_SHIFT_TIMEOUT 200
 #define HOLD_ON_OTHER_KEY_PRESS
