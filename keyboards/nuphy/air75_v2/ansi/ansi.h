@@ -60,7 +60,7 @@ enum custom_keycodes {
     DEBOUNCE_I,
     DEBOUNCE_T,
 
-    GAME_MODE,
+    GAME_MODE,  // unused (game mode removed), kept so VIA keycode numbering stays stable
     SOCD_TOG,
 
     KEYBORD_LOCK,

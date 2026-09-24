@@ -110,8 +110,6 @@ typedef enum {
 #define T_MIN                     (100 * 60)
 #define DEEP_SLEEP_TIME           4
 
-#define RGB_MATRIX_GAME_MODE      RGB_MATRIX_GRADIENT_LEFT_RIGHT
-#define SIDE_MATRIX_GAME_MODE     4
 #define SOCD_KEYS                 KC_A, KC_D, KC_LEFT, KC_RIGHT, KC_UP, KC_DOWN
 
 // default user config
@@ -166,14 +164,7 @@ typedef struct
     uint8_t debounce_type;
     uint8_t light_sleep;
     uint8_t alt_light_sleep;
-    uint8_t game_side_colour;
-    uint8_t game_side_light;
-    uint8_t game_rgb_mod;
-    uint8_t game_rgb_val;
-    uint8_t game_rgb_hue;
-    uint8_t game_rgb_sat;
-    uint8_t game_debounce_ms;
-    uint8_t game_debounce_type;
+    uint8_t reserved_game[8];       // unused (game mode removed), kept for EEPROM layout compatibility
     uint8_t socd_mode;
     uint8_t rf_delay_step;
     uint8_t retain1;
@@ -187,7 +178,6 @@ typedef struct
     uint8_t KC_LGUI;
     uint8_t KC_NUM;
     uint8_t KC_D;
-    uint8_t KC_G;
     uint8_t KC_F1;
     uint8_t RF_DFU;
     uint8_t KC_F12;
@@ -204,7 +194,6 @@ extern uint16_t           rf_link_show_time;
 extern uint8_t            rf_disconnect_delay;
 
 extern bool               f_bat_hold;
-extern bool               game_mode_enable;
 extern uint32_t           sys_show_timer;
 extern uint32_t           sleep_show_timer;
 extern uint16_t           f_rf_sw_press;
@@ -222,7 +211,6 @@ extern uint32_t           no_act_time;
 extern uint16_t           link_timeout;
 extern uint16_t           f_numlock_press;
 extern uint16_t           numlock_press_timer;
-extern uint16_t           f_gmode_reset_press;
 extern bool               f_rf_sleep;
 extern bool               f_wakeup_prepare;
 extern bool               f_goto_sleep;
@@ -241,7 +229,6 @@ extern uint16_t           side_one_timer;
 
 extern bool               is_side_ws2812_off(void);
 extern void               user_config_override(void);
-extern void               game_config_override(void);
 
 void    dev_sts_sync(void);
 void    rf_uart_init(void);
@@ -273,14 +260,11 @@ void    user_config_reset(void);
 void    led_power_handle(void);
 void    matrix_io_delay(void);
 void    set_link_mode(void);
-void    game_mode_tweak(void);
 void    user_debug(void);
 void    call_update_eeprom_data(bool* eeprom_update_init);
 void    signal_rgb_led(uint8_t selected_color, uint8_t start_led, uint8_t end_led, uint16_t show_time);
 void    reset_led_idx(void);
 void    debounce_type(void);
-void    game_config_reset(uint8_t save_to_eeprom);
-void    rgb_matrix_step_game_mode(uint8_t step);
 void    power_save(void);
 void    clear_rgb(void);
 uint8_t step_helper(uint8_t dir, uint8_t value);

@@ -169,20 +169,20 @@ void side_colour_control(uint8_t color) {
     if (user_config.ee_side_mode != SIDE_WAVE) {
         if (user_config.ee_side_rgb) {
             user_config.ee_side_rgb    = 0;
-            user_config.ee_side_colour = game_mode_enable;
+            user_config.ee_side_colour = 0;
         }
     }
 
     if (user_config.ee_side_rgb) {
         user_config.ee_side_rgb    = 0;
-        user_config.ee_side_colour = color ? game_mode_enable : SIDE_COLOUR_MAX - 1;
+        user_config.ee_side_colour = color ? 0 : SIDE_COLOUR_MAX - 1;
     } else {
         if (color) { user_config.ee_side_colour++; }
         else { user_config.ee_side_colour--; }
 
         if (user_config.ee_side_colour >= SIDE_COLOUR_MAX) {
             user_config.ee_side_rgb    = 1;
-            user_config.ee_side_colour = game_mode_enable;
+            user_config.ee_side_colour = 0;
         }
     }
 #ifndef NO_DEBUG
@@ -440,7 +440,7 @@ void side_one_control(void)
  */
 static void side_one_show(void)
 {
-    if (game_mode_enable || user_config.ee_side_one == 0 || user_config.ee_side_light == 0) { return; }
+    if (user_config.ee_side_one == 0 || user_config.ee_side_light == 0) { return; }
     static uint8_t my_side = RIGHT_SIDE;
 
     if (user_config.ee_side_one != LEFT_SIDE + RIGHT_SIDE) {
@@ -605,13 +605,6 @@ void bat_led_show(void) {
         charge_state  = dev_info.rf_charge;
     }
 
-    if (game_mode_enable) {
-        if(dev_info.rf_battery < low_bat_level) {
-            side_ws2812_set_color_strip(RIGHT_SIDE, 0x40, 0x00, 0x00);
-        }
-        return;
-    }
-
     if (charge_state != dev_info.rf_charge) {
         if (timer_elapsed32(bat_sts_debounce) > 1000) {
             if ((charge_state & 0x01) == 0 && (dev_info.rf_charge & 0x01) != 0) {
@@ -686,7 +679,6 @@ void device_reset_show(void) {
  */
 void device_reset_init(void) {
     side_play_point  = 0;
-    game_mode_enable = 0;
     f_bat_hold       = false;
 
     rgb_matrix_enable_noeeprom();
@@ -771,20 +763,6 @@ void numlock_rgb_show(void) {
     }
 }
 
-void rgb_matrix_step_game_mode(uint8_t step) {
-    if (step) {
-        user_config.game_rgb_mod++;
-        if (user_config.game_rgb_mod > RGB_MATRIX_CUSTOM_GAME_KEYS) { user_config.game_rgb_mod = 1; }
-        else if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = RGB_MATRIX_CUSTOM_GAME_KEYS; }
-    } else {
-        user_config.game_rgb_mod--;
-        if (user_config.game_rgb_mod > 3) { user_config.game_rgb_mod = 3; }
-        else if (user_config.game_rgb_mod < 1) { user_config.game_rgb_mod = RGB_MATRIX_CUSTOM_GAME_KEYS; }
-    }
-
-    rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
-}
-
 /**
  * @brief  side_led_show.
  */
@@ -794,7 +772,7 @@ void normal_led_process(void) {
     // side_mode & side_speed should always be valid...
     // refresh side LED animation based on speed.
 
-    uint32_t update_interval = game_mode_enable ? 500 : side_speed_table[user_config.ee_side_mode][user_config.ee_side_speed];
+    uint32_t update_interval = side_speed_table[user_config.ee_side_mode][user_config.ee_side_speed];
 
     if (timer_elapsed32(side_update_time) < update_interval) { return; }
     side_update_time = timer_read32();

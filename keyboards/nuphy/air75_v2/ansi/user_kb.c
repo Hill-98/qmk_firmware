@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ansi.h"
 #include "mcu_pwr.h"
 #include "color.h"
-#include "settings.h"
+__attribute__((weak)) void user_config_override(void) {}
 
 user_config_t   user_config;
 user_config_t   read_user_config;
@@ -30,7 +30,6 @@ DEV_INFO_STRUCT dev_info = {
     .rf_state   = RF_IDLE,
 };
 bool f_bat_hold          = 0;
-bool game_mode_enable    = 0;
 bool f_send_channel      = 0;
 bool f_dial_sw_init_ok   = 0;
 bool f_bat_num_show      = 0;
@@ -53,7 +52,6 @@ uint16_t       f_rgb_test_press        = 0;
 uint16_t       f_dev_reset_press       = 0;
 uint16_t       f_numlock_press         = 0;
 uint16_t       numlock_press_timer     = 0;
-uint16_t       f_gmode_reset_press     = 0;
 uint32_t       sys_show_timer          = 0;
 uint32_t       sleep_show_timer        = 0;
 
@@ -171,17 +169,6 @@ void user_key_press(void) {
         if (f_rgb_test_press > MEDIUM_PRESS_DELAY) {
             f_rgb_test_press = 0;
             rgb_test_show();
-        }
-    }
-
-    // Trigger Game Mode Reset
-    if (f_gmode_reset_press) {
-        f_gmode_reset_press++;
-        if (f_gmode_reset_press > MEDIUM_PRESS_DELAY) {
-            flush_eeprom_data();
-            game_config_reset(1);
-            game_mode_tweak();
-            f_gmode_reset_press = 0;
         }
     }
 
@@ -359,7 +346,7 @@ void timer_pro(void) {
     // step 10ms
     if (timer_elapsed32(interval_timer) < 10) { return; }
 
-    if (!game_mode_enable && no_act_time >= 1000 ) {
+    if (no_act_time >= 1000) {
         missing_time += (timer_elapsed32(interval_timer) - 10);
         if (missing_time >= 100 && no_act_time % 3000 != 0) {
             adjust_time  = missing_time / 10;
@@ -403,27 +390,11 @@ void call_update_eeprom_data(bool* eeprom_update_init) {
  * @brief Write pending settings to EEPROM now.
  * @note  While low-battery power save is active the in-RAM brightness values
  *        (RGB value 0, side light 1) are temporary, so the stored values are kept.
- *        In game mode only the game_* fields are updated.
  */
 static void write_pending_eeprom_data(void) {
     if (user_update) {
-        eeconfig_read_kb_datablock(&read_user_config, 0, sizeof(read_user_config));
-        if (game_mode_enable) {
-            if (!rgb_power_save) {
-                read_user_config.game_rgb_val    = rgb_matrix_config.hsv.v;
-                read_user_config.game_side_light = user_config.ee_side_light;
-            }
-            read_user_config.game_rgb_hue       = rgb_matrix_config.hsv.h;
-            read_user_config.game_rgb_sat       = rgb_matrix_config.hsv.s;
-            read_user_config.game_rgb_mod       = rgb_matrix_config.mode;
-            read_user_config.game_side_colour   = user_config.ee_side_colour;
-            read_user_config.game_debounce_ms   = user_config.debounce_ms;
-            read_user_config.game_debounce_type = user_config.debounce_type;
-        } else {
-            uint8_t stored_side_light = read_user_config.ee_side_light;
-            read_user_config          = user_config;
-            if (rgb_power_save) { read_user_config.ee_side_light = stored_side_light; }
-        }
+        read_user_config = user_config;
+        if (rgb_power_save) { eeconfig_read_kb_datablock_field(read_user_config, ee_side_light); }
         eeconfig_update_kb_datablock(&read_user_config, 0, sizeof(read_user_config));
 
         user_update = 0;
@@ -448,7 +419,7 @@ static void write_pending_eeprom_data(void) {
 }
 
 /**
- * @brief Write pending settings immediately (before sleep, mode switch, reload).
+ * @brief Write pending settings immediately (before sleep or reload).
  */
 void flush_eeprom_data(void) {
     if (user_update || rgb_update) { write_pending_eeprom_data(); }
@@ -466,40 +437,6 @@ void delay_update_eeprom_data(void) {
     write_pending_eeprom_data();
 }
 
-/**
- * @note Callers must call flush_eeprom_data() before flipping game_mode_enable,
- *       so pending changes are stored with the semantics of the mode they were made in.
- */
-void game_mode_tweak(void)
-{
-    if (game_mode_enable) {
-        pwr_rgb_led_on();
-        rgb_matrix_mode_noeeprom(user_config.game_rgb_mod);
-        rgb_matrix_config.hsv.v    = user_config.game_rgb_val;
-        rgb_matrix_config.hsv.h    = user_config.game_rgb_hue;
-        rgb_matrix_config.hsv.s    = user_config.game_rgb_sat;
-        user_config.ee_side_mode   = 2;
-        user_config.ee_side_rgb    = 0;
-        user_config.ee_side_colour = user_config.game_side_colour;
-        user_config.ee_side_light  = user_config.game_side_light;
-        user_config.debounce_ms    = user_config.game_debounce_ms;
-        user_config.debounce_type  = user_config.game_debounce_type;
-        if (user_config.numlock_state != 0) { user_config.numlock_state = 1; }
-        layer_on(GAME_BASE);
-    } else {
-        rgb_matrix_reload_from_eeprom();
-        eeconfig_read_kb_datablock(&user_config, 0, sizeof(user_config));
-        layer_off(GAME_BASE);
-    }
-
-#ifndef NO_DEBUG
-    dprintf("debounce:      %dms\n", user_config.debounce_ms);
-    dprintf("debounce type: %s\n", debounce_algo[user_config.debounce_type]);
-#endif
-    pwr_rgb_led_on();
-    signal_rgb_led(game_mode_enable * 3, led_idx.KC_G, UINT8_MAX, 2000);
-}
-
 void reset_led_idx(void) {
     led_idx.KC_LGUI  = get_led_idx(KC_LGUI);
 
@@ -510,7 +447,6 @@ void reset_led_idx(void) {
     }
 
     led_idx.KC_D     = get_led_idx(DEBOUNCE_T);
-    led_idx.KC_G     = get_led_idx(GAME_MODE);
     led_idx.KC_F1    = get_led_idx(KC_F1);
     led_idx.RF_DFU   = get_led_idx(RF_DFU);
     led_idx.SOCD_TOG = get_led_idx(SOCD_TOG);
@@ -615,23 +551,9 @@ void user_config_reset(void) {
     user_config.socd_mode               = 0;
     user_config.rf_delay_step           = 2;
     keymap_config.no_gui                = 0;
-    game_config_reset(0);
+    memset(user_config.reserved_game, 0, sizeof(user_config.reserved_game));
     user_config_override();
     eeconfig_update_kb_datablock(&user_config, 0, sizeof(user_config));
-}
-
-void game_config_reset(uint8_t save_to_eeprom) {
-    if (save_to_eeprom) { eeconfig_read_kb_datablock(&user_config, 0, sizeof(user_config)); }
-    user_config.game_side_colour       = SIDE_MATRIX_GAME_MODE;
-    user_config.game_side_light        = 2;
-    user_config.game_rgb_mod           = RGB_MATRIX_GAME_MODE;
-    user_config.game_rgb_val           = RGB_MATRIX_DEFAULT_VAL;
-    user_config.game_rgb_hue           = RGB_MATRIX_DEFAULT_HUE;
-    user_config.game_rgb_sat           = RGB_MATRIX_DEFAULT_SAT;
-    user_config.game_debounce_ms       = DEBOUNCE;
-    user_config.game_debounce_type     = 1;
-    game_config_override();
-    if (save_to_eeprom) { eeconfig_update_kb_datablock(&user_config, 0, sizeof(user_config)); }
 }
 
 void power_save(void) {
@@ -640,15 +562,10 @@ void power_save(void) {
     power_check_timer = timer_read32();
 
     if (dev_info.rf_battery > low_bat_level && rgb_power_save == 1) {
-        if (game_mode_enable) {
-            rgb_matrix_config.hsv.v = user_config.game_rgb_val;
-            user_config.ee_side_light = user_config.game_side_light;
-        } else {
-            // Keep settings changed during power save, then restore stored brightness.
-            flush_eeprom_data();
-            rgb_matrix_reload_from_eeprom();
-            eeconfig_read_kb_datablock(&user_config, 0, sizeof(user_config));
-        }
+        // Keep settings changed during power save, then restore stored brightness.
+        flush_eeprom_data();
+        rgb_matrix_reload_from_eeprom();
+        eeconfig_read_kb_datablock(&user_config, 0, sizeof(user_config));
         rgb_power_save = 0;
     } else if ((rgb_matrix_config.hsv.v > 0 || user_config.ee_side_light > 1) && dev_info.rf_battery < low_bat_level) {
         rgb_matrix_config.hsv.v   = 0;
@@ -667,7 +584,7 @@ void led_power_handle(void) {
 
     uint16_t led_interval = rgb_required == 1 ? 10: 50;
 
-    if (rgb_interval < led_interval || f_wakeup_prepare || game_mode_enable) {
+    if (rgb_interval < led_interval || f_wakeup_prepare) {
         return;
     }
 

@@ -47,8 +47,7 @@
 					"Spiral Sat.",
 					"Spiral Val.",
 					"Cycle All",
-					"Cycle Left/Right",
-					"Game Mode"
+					"Cycle Left/Right"
 				]
 			},
 			{
@@ -244,8 +243,8 @@
 			"shortName": "Debounce_T"
 		},
 		{
-			"name": "Game\nMode",
-			"title": "Trigger Game Mode",
+			"name": "Unused\n(GameMode)",
+			"title": "Unused (game mode was removed)",
 			"shortName": "Game_Mode"
 		},
 		{

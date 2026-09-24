@@ -70,49 +70,30 @@ static bool process_record_socd(uint16_t keycode, keyrecord_t *record) {
 }
 
 /**
- * @brief Keycodes whose changes must be persisted (delayed EEPROM write)
- *        and keycodes blocked in game mode.
+ * @brief Mark settings changed by these keycodes for the delayed EEPROM write.
  */
-static bool process_record_settings(uint16_t keycode, keyrecord_t *record) {
-
+static void mark_settings_dirty(uint16_t keycode) {
     switch (keycode) {
         case SIDE_VAI:
         case SIDE_VAD:
         case SIDE_HUI:
+        case SIDE_MOD:
+        case SIDE_SPI:
+        case SIDE_SPD:
+        case SIDE_1:
         case DEBOUNCE_I:
         case DEBOUNCE_D:
         case DEBOUNCE_T:
         case SOCD_TOG:
         case RF_DFU:
-            call_update_eeprom_data(&user_update);
-            return true;
-
         case NUMLOCK_IND:
-            if (game_mode_enable) { return true; }
-            call_update_eeprom_data(&user_update);
-            return true;
-
-        case SIDE_MOD:
-        case SIDE_SPI:
-        case SIDE_SPD:
-        case SIDE_1:
         case SLEEP_MODE:
         case SLEEP_I:
         case SLEEP_D:
-            if (game_mode_enable) { return false; }
             call_update_eeprom_data(&user_update);
-            return true;
-
-        case BAT_SHOW:
-        case SLEEP_NOW:
-            if (game_mode_enable) { return false; }
-            return true;
+            break;
 
         case QK_RGB_MATRIX_TOGGLE:
-            if (game_mode_enable) { return true; }
-            call_update_eeprom_data(&rgb_update);
-            return true;
-
         case QK_RGB_MATRIX_VALUE_UP:
         case QK_RGB_MATRIX_VALUE_DOWN:
         case QK_RGB_MATRIX_SATURATION_UP:
@@ -121,21 +102,13 @@ static bool process_record_settings(uint16_t keycode, keyrecord_t *record) {
         case QK_RGB_MATRIX_HUE_DOWN:
         case QK_RGB_MATRIX_MODE_NEXT:
         case QK_RGB_MATRIX_MODE_PREVIOUS:
-            if (game_mode_enable) {
-                call_update_eeprom_data(&user_update);
-                return true;
-            }
-            call_update_eeprom_data(&rgb_update);
-            return true;
-
         case QK_RGB_MATRIX_SPEED_UP:
         case QK_RGB_MATRIX_SPEED_DOWN:
-            if (game_mode_enable) { return false; }
             call_update_eeprom_data(&rgb_update);
-            return true;
+            break;
 
         default:
-            return true;
+            break;
     }
 }
 
@@ -146,9 +119,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    if (!process_record_settings(keycode, record)) {
-        return false;
-    }
+    mark_settings_dirty(keycode);
 
     if (!process_record_socd(keycode, record)) {
         return false;
@@ -156,7 +127,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case RF_DFU:
-            if (game_mode_enable) { return false; }
             if (record->event.pressed) {
                 f_rf_dfu_press = 1;
             } else {
@@ -362,7 +332,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case NUMLOCK_IND:
             if (record->event.pressed) {
-                user_config.numlock_state = (user_config.numlock_state + 1) % (3 - game_mode_enable);
+                user_config.numlock_state = (user_config.numlock_state + 1) % 3;
             }
             return false;
 
@@ -435,19 +405,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-        case GAME_MODE:
-            if (record->event.pressed) {
-                f_gmode_reset_press = 1;
-            } else {
-                if (f_gmode_reset_press) {
-                    f_gmode_reset_press = 0;
-                    flush_eeprom_data();
-                    game_mode_enable = !game_mode_enable;
-                    game_mode_tweak();
-                }
-            }
-            return false;
-
         case SOCD_TOG:
             if (record->event.pressed) {
                 user_config.socd_mode = (user_config.socd_mode + 1) % 4;
@@ -473,20 +430,12 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
         case QK_RGB_MATRIX_MODE_NEXT:
             if (record->event.pressed) {
-                if (game_mode_enable) {
-                    rgb_matrix_step_game_mode(1);
-                    return false;
-                }
                 rgb_matrix_step_noeeprom();
             }
             return false;
 
         case QK_RGB_MATRIX_MODE_PREVIOUS:
             if (record->event.pressed) {
-                if (game_mode_enable) {
-                    rgb_matrix_step_game_mode(0);
-                    return false;
-                }
                 rgb_matrix_step_reverse_noeeprom();
             }
             return false;
@@ -587,6 +536,11 @@ void keyboard_post_init_kb(void) {
 
     break_all_key();
     load_eeprom_data();
+    // The GAME_KEYS effect was removed; don't keep an effect id that no longer exists.
+    if (rgb_matrix_get_mode() >= RGB_MATRIX_EFFECT_MAX) {
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_DEFAULT_MODE);
+        call_update_eeprom_data(&rgb_update);
+    }
     dial_sw_fast_scan();
 #ifndef NO_DEBUG
     debug_enable   = false;
@@ -622,8 +576,6 @@ void housekeeping_task_kb(void) {
 #endif
 
     delay_update_eeprom_data();
-
-    if (game_mode_enable) { return; }
 
     sleep_handle();
 

@@ -78,7 +78,7 @@ void matrix_init_custom(void) {
 }
 
 void matrix_io_delay(void) {
-    if (MATRIX_IO_DELAY == 0 || game_mode_enable == 1 || f_rf_sleep) {
+    if (MATRIX_IO_DELAY == 0 || f_rf_sleep) {
         NOP_WAIT;
         return;
     }
